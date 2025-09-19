@@ -11,11 +11,13 @@ import Index from "./pages/Index";
 import Settlement from "./pages/Settlement";
 import NotFound from "./pages/NotFound";
 
+// Create QueryClient instance with proper configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
     },
   },
 });
@@ -24,7 +26,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={config}>
-        <RainbowKitProvider>
+        <RainbowKitProvider
+          queryClient={queryClient}
+          initialChain={config.chains[0]}
+        >
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -32,7 +37,6 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/settlement" element={<Settlement />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
